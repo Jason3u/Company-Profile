@@ -32,9 +32,36 @@ profile:
 dns:
   enable: true
   ipv6: false
-  listen: 0.0.0.0:1053
+  default-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+    - 114.114.114.114
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
+  use-hosts: true
+  respect-rules: true
+  proxy-server-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+    - 114.114.114.114
+  nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+    - 114.114.114.114
+  fallback:
+    - 1.1.1.1
+    - 8.8.8.8
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+    geosite:
+      - gfw
+    ipcidr:
+      - 240.0.0.0/4
+    domain:
+      - "+.google.com"
+      - "+.facebook.com"
+      - "+.youtube.com"
   fake-ip-filter:
     - "*.lan"
     - "*.local"
@@ -44,19 +71,6 @@ dns:
     - "time.windows.com"
     - "time.nist.gov"
     - "time.apple.com"
-  default-nameserver:
-    - 223.5.5.5
-    - 119.29.29.29
-    - 1.1.1.1
-  nameserver:
-    - https://doh.pub/dns-query
-    - https://dns.alidns.com/dns-query
-  fallback:
-    - https://dns.google/dns-query
-    - https://cloudflare-dns.com/dns-query
-  fallback-filter:
-    geoip: true
-    geoip-code: CN
   nameserver-policy:
     "geosite:cn":
       - 223.5.5.5
@@ -74,7 +88,7 @@ proxy-providers:
     path: ./providers/provider.yaml
     health-check:
       enable: true
-      url: https://www.gstatic.com/generate_204
+      url: http://www.gstatic.com/generate_204
       interval: 300
 
 # ---------- 代理组 ----------
@@ -96,7 +110,7 @@ proxy-groups:
     type: url-test
     use:
       - Provider
-    url: https://www.gstatic.com/generate_204
+    url: http://www.gstatic.com/generate_204
     interval: 300
     tolerance: 50
 
@@ -106,7 +120,7 @@ proxy-groups:
     use:
       - Provider
     filter: '(?i)\bJP\b|日本|东京|大阪|名古屋|Japan|Tokyo|Osaka|Nagoya'
-    url: https://www.gstatic.com/generate_204
+    url: http://www.gstatic.com/generate_204
     interval: 300
 
   # 香港节点池
@@ -115,7 +129,7 @@ proxy-groups:
     use:
       - Provider
     filter: '(?i)\bHK\b|香港|Hong ?Kong'
-    url: https://www.gstatic.com/generate_204
+    url: http://www.gstatic.com/generate_204
     interval: 300
 
   # 美国节点池
@@ -124,7 +138,7 @@ proxy-groups:
     use:
       - Provider
     filter: '(?i)\bUS\b|\bUSA\b|美国|美西|美东|洛杉矶|圣何塞|硅谷|纽约|达拉斯|Los Angeles|San Jose|Silicon|New York|Dallas'
-    url: https://www.gstatic.com/generate_204
+    url: http://www.gstatic.com/generate_204
     interval: 300
 
   # 流媒体专用：默认日本，可手动切香港
