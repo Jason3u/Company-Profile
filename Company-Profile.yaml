@@ -174,24 +174,39 @@ rules:
   # ===== 1. Adobe 全家桶：全部断网（放在最前面，优先级最高） =====
   # 注意：以下规则会拦截所有 Adobe 域名，应用将完全无法联网；
   #       若日后购买了正版 Adobe，请删除本段规则。
+  # 关键词兜底：任何域名只要含 "adobe" 字样一律拦截（最彻底的兜底）
+  - DOMAIN-KEYWORD,adobe,🛑 拦截
+  # ---- Adobe 主域名 ----
   - DOMAIN-SUFFIX,adobe.com,🛑 拦截
   - DOMAIN-SUFFIX,adobe.net,🛑 拦截
   - DOMAIN-SUFFIX,adobe.io,🛑 拦截
+  - DOMAIN-SUFFIX,adobe-dns.com,🛑 拦截
   - DOMAIN-SUFFIX,adobelogin.com,🛑 拦截
   - DOMAIN-SUFFIX,adobess.com,🛑 拦截
-  - DOMAIN-SUFFIX,adobecqms.net,🛑 拦截
-  - DOMAIN-SUFFIX,adobedtm.com,🛑 拦截
-  - DOMAIN-SUFFIX,adobeexchange.com,🛑 拦截
+  - DOMAIN-SUFFIX,adobegenuine.com,🛑 拦截
+  - DOMAIN-SUFFIX,adobespark.com,🛑 拦截
   - DOMAIN-SUFFIX,adobestock.com,🛑 拦截
   - DOMAIN-SUFFIX,adobefonts.com,🛑 拦截
   - DOMAIN-SUFFIX,adobeconnect.com,🛑 拦截
-  - DOMAIN-SUFFIX,adobegenuine.com,🛑 拦截
+  - DOMAIN-SUFFIX,adobeexchange.com,🛑 拦截
+  - DOMAIN-SUFFIX,adobecqms.net,🛑 拦截
+  - DOMAIN-SUFFIX,adobedtm.com,🛑 拦截
+  # ---- Adobe 关联 / 收购产品 ----
   - DOMAIN-SUFFIX,behance.net,🛑 拦截
   - DOMAIN-SUFFIX,behance.com,🛑 拦截
+  - DOMAIN-SUFFIX,photoshop.com,🛑 拦截
+  - DOMAIN-SUFFIX,magento.com,🛑 拦截
+  - DOMAIN-SUFFIX,marketo.com,🛑 拦截
+  - DOMAIN-SUFFIX,echosign.com,🛑 拦截
+  - DOMAIN-SUFFIX,typekit.com,🛑 拦截
+  - DOMAIN-SUFFIX,typekit.net,🛑 拦截
+  - DOMAIN-SUFFIX,scene7.com,🛑 拦截
+  # ---- Adobe Analytics / 数据追踪 ----
   - DOMAIN-SUFFIX,omniture.com,🛑 拦截
   - DOMAIN-SUFFIX,omtrdc.net,🛑 拦截
   - DOMAIN-SUFFIX,demdex.net,🛑 拦截
   - DOMAIN-SUFFIX,everesttech.net,🛑 拦截
+  - DOMAIN-SUFFIX,2o7.net,🛑 拦截
 
   # ===== 2. 内网/本地流量直连 =====
   - IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
