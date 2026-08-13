@@ -63,15 +63,13 @@ dns:
       - 119.29.29.29
 
 # ============================================================
-#  ⭐⭐⭐ 订阅链接填写处（重点）⭐⭐⭐
-#  把你购买的机场订阅链接填到下面的 url 中，例如：
-#    url: "https://sub.example.com/api/v1/client/subscribe?token=xxxxxxxxxxxx"
-#  订阅链接通常在机场网站「复制订阅链接」按钮处获取。
+#  订阅链接（已填入，仅分享给信任的人）
+#  机场：良心云 liangxin.xyz
 # ============================================================
 proxy-providers:
   Provider:
     type: http
-    url: "https://请在这里填入你的订阅链接"
+    url: "https://liangxin.xyz/api/v1/liangxin?OwO=08473de9c81c32890fb3c8744ba74b5b"
     interval: 86400                  # 订阅更新间隔（秒），每天更新一次
     path: ./providers/provider.yaml
     health-check:

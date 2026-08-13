@@ -17,16 +17,14 @@
 
 ### 1. 填入你的订阅链接
 
-打开 `Company-Profile.yaml`，找到 `proxy-providers` 段：
+订阅链接已内置在 `Company-Profile.yaml` 的 `proxy-providers` 段中，无需再填：
 
 ```yaml
 proxy-providers:
   Provider:
     type: http
-    url: "https://请在这里填入你的订阅链接"   # ← 把这里替换成你的机场订阅链接
+    url: "https://liangxin.xyz/api/v1/liangxin?OwO=…"   # 订阅链接已填好
 ```
-
-订阅链接一般在机场网站「复制订阅链接」按钮处获取。
 
 ### 2. 导入到 Clash
 
@@ -62,4 +60,4 @@ proxy-providers:
 
 ## ⚠️ 安全提醒
 
-本仓库是**公开**的：**不要把真实订阅链接（含 token）提交到仓库里**，否则任何人都能使用你的订阅流量。建议把真实链接填在本地使用的文件里；如担心泄露，可将仓库改为私有。
+本配置内置了订阅链接（含 token），**只分享给信任的人**，且对方拿到后能使用的也仅是这份配置，请勿把链接随意外传。如日后担心泄露，可到机场后台重置订阅 token，再更新本文件即可。
