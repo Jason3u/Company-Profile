@@ -77,15 +77,6 @@ proxy-providers:
       url: https://www.gstatic.com/generate_204
       interval: 300
 
-# ---------- 广告拦截规则源（可选，若拉取失败可删除此段及 rules 中对应的一行） ----------
-rule-providers:
-  reject:
-    type: http
-    behavior: domain
-    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt"
-    path: ./ruleset/reject.yaml
-    interval: 86400
-
 # ---------- 代理组 ----------
 proxy-groups:
   # 默认出口：所有未命中国内规则的外网流量都从这里走
@@ -158,7 +149,7 @@ proxy-groups:
     proxies:
       - DIRECT
 
-  # 拦截（Adobe 断网 / 广告）
+  # 拦截（Adobe 断网）
   - name: 🛑 拦截
     type: select
     proxies:
@@ -188,17 +179,14 @@ rules:
   - DOMAIN-SUFFIX,demdex.net,🛑 拦截
   - DOMAIN-SUFFIX,everesttech.net,🛑 拦截
 
-  # ===== 2. 广告/追踪拦截 =====
-  - RULE-SET,reject,🛑 拦截
-
-  # ===== 3. 内网/本地流量直连 =====
+  # ===== 2. 内网/本地流量直连 =====
   - IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
   - IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
   - IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
   - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
   - IP-CIDR,169.254.0.0/16,DIRECT,no-resolve
 
-  # ===== 4. AI 服务：走美国节点 =====
+  # ===== 3. AI 服务：走美国节点 =====
   - GEOSITE,openai,🤖 AI专用
   - DOMAIN-SUFFIX,anthropic.com,🤖 AI专用
   - DOMAIN-SUFFIX,claude.ai,🤖 AI专用
@@ -211,7 +199,7 @@ rules:
   - DOMAIN-SUFFIX,copilot.microsoft.com,🤖 AI专用
   - DOMAIN-SUFFIX,blackbox.ai,🤖 AI专用
 
-  # ===== 5. 流媒体：走日本/香港节点 =====
+  # ===== 4. 流媒体：走日本/香港节点 =====
   - GEOSITE,youtube,🌍 流媒体专用
   - GEOSITE,netflix,🌍 流媒体专用
   - GEOSITE,disney,🌍 流媒体专用
@@ -224,9 +212,9 @@ rules:
   - DOMAIN-SUFFIX,tiktokcdn.com,🌍 流媒体专用
   - DOMAIN-SUFFIX,tiktokcdn-us.com,🌍 流媒体专用
 
-  # ===== 6. 国内流量：直连 =====
-  - GEOSITE,geolocation-cn,🎯 国内直连
+  # ===== 5. 国内流量：直连 =====
+  - GEOSITE,cn,🎯 国内直连
   - GEOIP,CN,🎯 国内直连,no-resolve
 
-  # ===== 7. 兜底：其余国外流量走默认代理 =====
+  # ===== 6. 兜底：其余国外流量走默认代理 =====
   - MATCH,🚀 节点选择
