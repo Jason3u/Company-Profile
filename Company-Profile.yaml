@@ -1,0 +1,234 @@
+# ============================================================
+#  Company Profile
+#  个人 Clash 分流配置（适用于 Clash Meta / Mihomo 内核）
+#
+#  【分流策略】
+#   1. 国内网站/应用      → 直连
+#   2. 国外软件/网站      → 代理（默认节点，可手动切换）
+#   3. 流媒体(YouTube/Pinterest 等) → 默认日本/香港节点
+#   4. AI 服务           → 默认美国节点
+#   5. Adobe 全家桶      → 全部断网（REJECT）
+#
+#  【适用客户端】
+#   Clash Verge Rev / Mihomo Party / FlClash / Clash Meta
+# ============================================================
+
+# ---------- 基础设置 ----------
+mixed-port: 7890          # 代理端口（HTTP/SOCKS5 共用）
+allow-lan: false          # 是否允许局域网内其他设备连接
+mode: rule                # 分流模式
+log-level: info
+ipv6: false
+unified-delay: true
+tcp-concurrent: true
+# external-controller: 127.0.0.1:9090   # 如需 Web 控制面板可取消注释
+
+# 记住节点选择（客户端重启后保持之前的节点选择）
+profile:
+  store-selected: true
+  store-fake-ip: true
+
+# ---------- DNS 设置 ----------
+dns:
+  enable: true
+  ipv6: false
+  listen: 0.0.0.0:1053
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter:
+    - "*.lan"
+    - "*.local"
+    - "*.localhost"
+    - "*.msftconnecttest.com"
+    - "*.msftncsi.com"
+    - "time.windows.com"
+    - "time.nist.gov"
+    - "time.apple.com"
+  default-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+    - 1.1.1.1
+  nameserver:
+    - https://doh.pub/dns-query
+    - https://dns.alidns.com/dns-query
+  fallback:
+    - https://dns.google/dns-query
+    - https://cloudflare-dns.com/dns-query
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+  nameserver-policy:
+    "geosite:cn":
+      - 223.5.5.5
+      - 119.29.29.29
+
+# ============================================================
+#  ⭐⭐⭐ 订阅链接填写处（重点）⭐⭐⭐
+#  把你购买的机场订阅链接填到下面的 url 中，例如：
+#    url: "https://sub.example.com/api/v1/client/subscribe?token=xxxxxxxxxxxx"
+#  订阅链接通常在机场网站「复制订阅链接」按钮处获取。
+# ============================================================
+proxy-providers:
+  Provider:
+    type: http
+    url: "https://请在这里填入你的订阅链接"
+    interval: 86400                  # 订阅更新间隔（秒），每天更新一次
+    path: ./providers/provider.yaml
+    health-check:
+      enable: true
+      url: https://www.gstatic.com/generate_204
+      interval: 300
+
+# ---------- 广告拦截规则源（可选，若拉取失败可删除此段及 rules 中对应的一行） ----------
+rule-providers:
+  reject:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt"
+    path: ./ruleset/reject.yaml
+    interval: 86400
+
+# ---------- 代理组 ----------
+proxy-groups:
+  # 默认出口：所有未命中国内规则的外网流量都从这里走
+  - name: 🚀 节点选择
+    type: select
+    proxies:
+      - ♻️ 自动选择
+      - 🌍 流媒体专用
+      - 🤖 AI专用
+      - 🎯 国内直连
+      - 🛑 拦截
+    use:
+      - Provider
+
+  # 自动测速选择延迟最低的节点
+  - name: ♻️ 自动选择
+    type: url-test
+    use:
+      - Provider
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+
+  # 日本节点池
+  - name: 🇯🇵 日本节点
+    type: url-test
+    use:
+      - Provider
+    filter: '(?i)\bJP\b|日本|东京|大阪|名古屋|Japan|Tokyo|Osaka|Nagoya'
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+
+  # 香港节点池
+  - name: 🇭🇰 香港节点
+    type: url-test
+    use:
+      - Provider
+    filter: '(?i)\bHK\b|香港|Hong ?Kong'
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+
+  # 美国节点池
+  - name: 🇺🇸 美国节点
+    type: url-test
+    use:
+      - Provider
+    filter: '(?i)\bUS\b|\bUSA\b|美国|美西|美东|洛杉矶|圣何塞|硅谷|纽约|达拉斯|Los Angeles|San Jose|Silicon|New York|Dallas'
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+
+  # 流媒体专用：默认日本，可手动切香港
+  - name: 🌍 流媒体专用
+    type: select
+    proxies:
+      - 🇯🇵 日本节点
+      - 🇭🇰 香港节点
+      - ♻️ 自动选择
+      - 🎯 国内直连
+
+  # AI 专用：默认美国
+  - name: 🤖 AI专用
+    type: select
+    proxies:
+      - 🇺🇸 美国节点
+      - ♻️ 自动选择
+
+  # 国内直连
+  - name: 🎯 国内直连
+    type: select
+    proxies:
+      - DIRECT
+
+  # 拦截（Adobe 断网 / 广告）
+  - name: 🛑 拦截
+    type: select
+    proxies:
+      - REJECT
+
+# ---------- 分流规则（从上到下匹配，顺序很重要） ----------
+rules:
+  # ===== 1. Adobe 全家桶：全部断网（放在最前面，优先级最高） =====
+  # 注意：以下规则会拦截所有 Adobe 域名，应用将完全无法联网；
+  #       若日后购买了正版 Adobe，请删除本段规则。
+  - DOMAIN-SUFFIX,adobe.com,🛑 拦截
+  - DOMAIN-SUFFIX,adobe.net,🛑 拦截
+  - DOMAIN-SUFFIX,adobe.io,🛑 拦截
+  - DOMAIN-SUFFIX,adobelogin.com,🛑 拦截
+  - DOMAIN-SUFFIX,adobess.com,🛑 拦截
+  - DOMAIN-SUFFIX,adobecqms.net,🛑 拦截
+  - DOMAIN-SUFFIX,adobedtm.com,🛑 拦截
+  - DOMAIN-SUFFIX,adobeexchange.com,🛑 拦截
+  - DOMAIN-SUFFIX,adobestock.com,🛑 拦截
+  - DOMAIN-SUFFIX,adobefonts.com,🛑 拦截
+  - DOMAIN-SUFFIX,adobeconnect.com,🛑 拦截
+  - DOMAIN-SUFFIX,adobegenuine.com,🛑 拦截
+  - DOMAIN-SUFFIX,behance.net,🛑 拦截
+  - DOMAIN-SUFFIX,behance.com,🛑 拦截
+  - DOMAIN-SUFFIX,omniture.com,🛑 拦截
+  - DOMAIN-SUFFIX,omtrdc.net,🛑 拦截
+  - DOMAIN-SUFFIX,demdex.net,🛑 拦截
+  - DOMAIN-SUFFIX,everesttech.net,🛑 拦截
+
+  # ===== 2. 广告/追踪拦截 =====
+  - RULE-SET,reject,🛑 拦截
+
+  # ===== 3. 内网/本地流量直连 =====
+  - IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
+  - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
+  - IP-CIDR,169.254.0.0/16,DIRECT,no-resolve
+
+  # ===== 4. AI 服务：走美国节点 =====
+  - GEOSITE,openai,🤖 AI专用
+  - DOMAIN-SUFFIX,anthropic.com,🤖 AI专用
+  - DOMAIN-SUFFIX,claude.ai,🤖 AI专用
+  - DOMAIN-SUFFIX,perplexity.ai,🤖 AI专用
+  - DOMAIN-SUFFIX,huggingface.co,🤖 AI专用
+  - DOMAIN-SUFFIX,midjourney.com,🤖 AI专用
+  - DOMAIN-SUFFIX,gemini.google.com,🤖 AI专用
+  - DOMAIN-SUFFIX,aistudio.google.com,🤖 AI专用
+  - DOMAIN-SUFFIX,deepmind.google,🤖 AI专用
+  - DOMAIN-SUFFIX,copilot.microsoft.com,🤖 AI专用
+  - DOMAIN-SUFFIX,blackbox.ai,🤖 AI专用
+
+  # ===== 5. 流媒体：走日本/香港节点 =====
+  - GEOSITE,youtube,🌍 流媒体专用
+  - GEOSITE,netflix,🌍 流媒体专用
+  - GEOSITE,disney,🌍 流媒体专用
+  - GEOSITE,spotify,🌍 流媒体专用
+  - DOMAIN-SUFFIX,pinterest.com,🌍 流媒体专用
+  - DOMAIN-SUFFIX,pinimg.com,🌍 流媒体专用
+  - DOMAIN-SUFFIX,twitch.tv,🌍 流媒体专用
+  - DOMAIN-SUFFIX,dailymotion.com,🌍 流媒体专用
+  - DOMAIN-SUFFIX,tiktok.com,🌍 流媒体专用
+  - DOMAIN-SUFFIX,tiktokcdn.com,🌍 流媒体专用
+  - DOMAIN-SUFFIX,tiktokcdn-us.com,🌍 流媒体专用
+
+  # ===== 6. 国内流量：直连 =====
+  - GEOSITE,geolocation-cn,🎯 国内直连
+  - GEOIP,CN,🎯 国内直连,no-resolve
+
+  # ===== 7. 兜底：其余国外流量走默认代理 =====
+  - MATCH,🚀 节点选择
