@@ -7,7 +7,8 @@
 #   2. 国外软件/网站      → 代理（默认节点，可手动切换）
 #   3. 流媒体(YouTube/Pinterest 等) → 默认日本/香港节点
 #   4. AI 服务           → 默认美国节点
-#   5. Adobe 全家桶      → 全部断网（REJECT）
+#   5. RunningHub        → 默认香港节点
+#   6. Adobe 全家桶      → 全部断网（REJECT）
 #
 #  【适用客户端】
 #   Clash Verge Rev / Mihomo Party / FlClash / Clash Meta
@@ -157,6 +158,13 @@ proxy-groups:
       - 🇺🇸 美国节点
       - ♻️ 自动选择
 
+  # RunningHub：默认香港节点
+  - name: 🎨 RunningHub
+    type: select
+    proxies:
+      - 🇭🇰 香港节点
+      - ♻️ 自动选择
+
   # 国内直连
   - name: 🎯 国内直连
     type: select
@@ -228,7 +236,10 @@ rules:
   - DOMAIN-SUFFIX,copilot.microsoft.com,🤖 AI专用
   - DOMAIN-SUFFIX,blackbox.ai,🤖 AI专用
 
-  # ===== 4. 流媒体：走日本/香港节点 =====
+  # ===== 4. RunningHub：默认香港节点 =====
+  - DOMAIN-SUFFIX,runninghub.ai,🎨 RunningHub
+
+  # ===== 5. 流媒体：走日本/香港节点 =====
   - GEOSITE,youtube,🌍 流媒体专用
   - GEOSITE,netflix,🌍 流媒体专用
   - GEOSITE,disney,🌍 流媒体专用
@@ -241,9 +252,9 @@ rules:
   - DOMAIN-SUFFIX,tiktokcdn.com,🌍 流媒体专用
   - DOMAIN-SUFFIX,tiktokcdn-us.com,🌍 流媒体专用
 
-  # ===== 5. 国内流量：直连 =====
+  # ===== 6. 国内流量：直连 =====
   - GEOSITE,cn,🎯 国内直连
   - GEOIP,CN,🎯 国内直连,no-resolve
 
-  # ===== 6. 兜底：其余国外流量走默认代理 =====
+  # ===== 7. 兜底：其余国外流量走默认代理 =====
   - MATCH,🚀 节点选择
