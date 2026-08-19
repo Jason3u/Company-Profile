@@ -215,6 +215,7 @@ rules:
   - DOMAIN-SUFFIX,demdex.net,🛑 拦截
   - DOMAIN-SUFFIX,everesttech.net,🛑 拦截
   - DOMAIN-SUFFIX,2o7.net,🛑 拦截
+  - DOMAIN-SUFFIX,adobestats.io,🛑 拦截
 
   # ===== 2. 内网/本地流量直连 =====
   - IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
