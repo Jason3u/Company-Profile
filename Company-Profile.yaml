@@ -8,7 +8,10 @@
 #   3. 流媒体(YouTube/Pinterest 等) → 默认日本/香港节点
 #   4. AI 服务           → 默认美国节点
 #   5. RunningHub        → 默认香港节点
-#   6. Adobe 全家桶      → 全部断网（REJECT）
+#   6. TapNow            → 默认香港节点
+#   7. Adobe 全家桶      → 全部断网（REJECT）
+#
+#   ⚠️ 美国节点仅默认提供给 AI 服务使用（保证 AI 风控风险最低）
 #
 #  【适用客户端】
 #   Clash Verge Rev / Mihomo Party / FlClash / Clash Meta
@@ -165,6 +168,14 @@ proxy-groups:
       - 🇭🇰 香港节点
       - ♻️ 自动选择
 
+  # TapNow：默认香港节点（美国节点仅保留给 AI 使用）
+  - name: 🎨 TapNow
+    type: select
+    proxies:
+      - 🇭🇰 香港节点
+      - 🇯🇵 日本节点
+      - ♻️ 自动选择
+
   # 国内直连
   - name: 🎯 国内直连
     type: select
@@ -239,6 +250,9 @@ rules:
 
   # ===== 4. RunningHub：默认香港节点 =====
   - DOMAIN-SUFFIX,runninghub.ai,🎨 RunningHub
+
+  # ===== 4.5 TapNow：默认香港节点 =====
+  - DOMAIN-SUFFIX,tapnow.ai,🎨 TapNow
 
   # ===== 5. 流媒体：走日本/香港节点 =====
   - GEOSITE,youtube,🌍 流媒体专用
