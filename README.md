@@ -10,6 +10,7 @@
 | 国外软件 / 网站 | 代理（默认走「🚀 节点选择」，可在客户端里手动切换） |
 | YouTube / Pinterest / Netflix 等流媒体 | 日本 / 香港节点（默认日本，可手动切换） |
 | ChatGPT / Claude 等 AI 服务 | 美国节点 |
+| 腾讯 WorkBuddy | 全部直连（不走代理） |
 | Adobe 全家桶 | 全部断网（REJECT，防止弹购买提示） |
 
 ## 快速开始
@@ -47,6 +48,7 @@ proxy-providers:
 ## 自定义规则
 
 - **新增断网 / 直连 / 分流的域名**：在 `rules` 段对应位置加一行，格式 `DOMAIN-SUFFIX,xxx.com,组名`。
+- **WorkBuddy 直连**：优先按 Windows 进程 `WorkBuddy.exe` 匹配，因此它访问的模型、插件及第三方站点也会直连；官方域名作为兜底。
 - **Adobe 断网列表**：位于 `rules` 第一段，按需增删；若日后购买正版，请删除整个第一段。
 - **节点地区筛选**：在 `proxy-groups` 里各节点池的 `filter` 正则处调整（例如日本节点池只保留含「日本 / JP / Tokyo」的节点）。
 

@@ -9,7 +9,8 @@
 #   4. AI 服务           → 默认美国节点
 #   5. RunningHub        → 默认香港节点
 #   6. TapNow            → 默认香港节点
-#   7. Adobe 全家桶      → 全部断网（REJECT）
+#   7. WorkBuddy         → 全部直连
+#   8. Adobe 全家桶      → 全部断网（REJECT）
 #
 #   ⚠️ 美国节点仅默认提供给 AI 服务使用（保证 AI 风控风险最低）
 #
@@ -176,6 +177,12 @@ proxy-groups:
       - 🇯🇵 日本节点
       - ♻️ 自动选择
 
+  # 腾讯 WorkBuddy：固定直连，不经过代理节点
+  - name: 💼 WorkBuddy
+    type: select
+    proxies:
+      - DIRECT
+
   # 国内直连
   - name: 🎯 国内直连
     type: select
@@ -235,7 +242,14 @@ rules:
   - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
   - IP-CIDR,169.254.0.0/16,DIRECT,no-resolve
 
-  # ===== 3. AI 服务：走美国节点 =====
+  # ===== 3. 腾讯 WorkBuddy：所有流量直连 =====
+  # 进程规则覆盖 WorkBuddy 访问的模型、插件和任意第三方站点；
+  # 官方域名规则用于进程识别不可用时的兜底。
+  - PROCESS-NAME,WorkBuddy.exe,💼 WorkBuddy
+  - DOMAIN-SUFFIX,copilot.tencent.com,💼 WorkBuddy
+  - DOMAIN-SUFFIX,workbuddy.ai,💼 WorkBuddy
+
+  # ===== 4. AI 服务：走美国节点 =====
   - GEOSITE,openai,🤖 AI专用
   - DOMAIN-SUFFIX,anthropic.com,🤖 AI专用
   - DOMAIN-SUFFIX,claude.ai,🤖 AI专用
@@ -248,13 +262,13 @@ rules:
   - DOMAIN-SUFFIX,copilot.microsoft.com,🤖 AI专用
   - DOMAIN-SUFFIX,blackbox.ai,🤖 AI专用
 
-  # ===== 4. RunningHub：默认香港节点 =====
+  # ===== 5. RunningHub：默认香港节点 =====
   - DOMAIN-SUFFIX,runninghub.ai,🎨 RunningHub
 
-  # ===== 4.5 TapNow：默认香港节点 =====
+  # ===== 6. TapNow：默认香港节点 =====
   - DOMAIN-SUFFIX,tapnow.ai,🎨 TapNow
 
-  # ===== 5. 流媒体：走日本/香港节点 =====
+  # ===== 7. 流媒体：走日本/香港节点 =====
   - GEOSITE,youtube,🌍 流媒体专用
   - GEOSITE,netflix,🌍 流媒体专用
   - GEOSITE,disney,🌍 流媒体专用
@@ -267,9 +281,9 @@ rules:
   - DOMAIN-SUFFIX,tiktokcdn.com,🌍 流媒体专用
   - DOMAIN-SUFFIX,tiktokcdn-us.com,🌍 流媒体专用
 
-  # ===== 6. 国内流量：直连 =====
+  # ===== 8. 国内流量：直连 =====
   - GEOSITE,cn,🎯 国内直连
   - GEOIP,CN,🎯 国内直连,no-resolve
 
-  # ===== 7. 兜底：其余国外流量走默认代理 =====
+  # ===== 9. 兜底：其余国外流量走默认代理 =====
   - MATCH,🚀 节点选择
