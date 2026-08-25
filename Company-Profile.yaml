@@ -248,6 +248,7 @@ rules:
   - PROCESS-NAME,WorkBuddy.exe,💼 WorkBuddy
   - DOMAIN-SUFFIX,copilot.tencent.com,💼 WorkBuddy
   - DOMAIN-SUFFIX,workbuddy.ai,💼 WorkBuddy
+  - DOMAIN-SUFFIX,workbuddy.link,💼 WorkBuddy
 
   # ===== 4. AI 服务：走美国节点 =====
   - GEOSITE,openai,🤖 AI专用

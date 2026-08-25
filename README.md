@@ -48,7 +48,7 @@ proxy-providers:
 ## 自定义规则
 
 - **新增断网 / 直连 / 分流的域名**：在 `rules` 段对应位置加一行，格式 `DOMAIN-SUFFIX,xxx.com,组名`。
-- **WorkBuddy 直连**：优先按 Windows 进程 `WorkBuddy.exe` 匹配，因此它访问的模型、插件及第三方站点也会直连；官方域名作为兜底。
+- **WorkBuddy 直连**：优先按 Windows 进程 `WorkBuddy.exe` 匹配，因此它访问的模型、插件及第三方站点也会直连；官方主域名和 `workbuddy.link` 分享链接域名作为兜底。
 - **Adobe 断网列表**：位于 `rules` 第一段，按需增删；若日后购买正版，请删除整个第一段。
 - **节点地区筛选**：在 `proxy-groups` 里各节点池的 `filter` 正则处调整（例如日本节点池只保留含「日本 / JP / Tokyo」的节点）。
 
