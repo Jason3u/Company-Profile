@@ -77,10 +77,17 @@ dns:
     - "time.windows.com"
     - "time.nist.gov"
     - "time.apple.com"
+    # WorkBuddy 分享页使用腾讯云动态加速，保留真实 IP，避免 Fake-IP 影响入口选择
+    - "workbuddy.link"
+    - "*.workbuddy.link"
   nameserver-policy:
     "geosite:cn":
       - 223.5.5.5
       - 119.29.29.29
+    # WorkBuddy 分享链接固定用国内 DNS 解析，不使用境外 fallback
+    "+.workbuddy.link":
+      - 119.29.29.29
+      - 223.5.5.5
 
 # ============================================================
 #  订阅链接（已填入，仅分享给信任的人）
@@ -249,6 +256,9 @@ rules:
   - DOMAIN-SUFFIX,workbuddy.ai,DIRECT
   - DOMAIN-SUFFIX,workbuddy.cn,DIRECT
   - DOMAIN-SUFFIX,workbuddy.tencent.com,DIRECT
+  # WorkBuddy 分享页的腾讯云全局加速 CNAME
+  - DOMAIN-SUFFIX,qcloudzygj.com,DIRECT
+  - DOMAIN-SUFFIX,qcloudwzgj.com,DIRECT
   # 腾讯官方主服务 / OpenAPI / 邀请 / 企业专享域名
   - DOMAIN-SUFFIX,copilot.tencent.com,DIRECT
   - DOMAIN-SUFFIX,copilot-invite.tencent.com,DIRECT
