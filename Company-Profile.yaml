@@ -29,6 +29,12 @@ tcp-concurrent: true
 find-process-mode: strict  # 严格识别发起连接的进程，用于 WorkBuddy 强制直连
 # external-controller: 127.0.0.1:9090   # 如需 Web 控制面板可取消注释
 
+# WorkBuddy 分享页对 Mihomo TUN 接管存在兼容问题。
+# 只补充 TUN 排除项，TUN 是否启用仍由客户端设置决定。
+tun:
+  route-exclude-address:
+    - 120.53.74.0/24
+
 # 记住节点选择（客户端重启后保持之前的节点选择）
 profile:
   store-selected: true
@@ -259,6 +265,8 @@ rules:
   # WorkBuddy 分享页的腾讯云全局加速 CNAME
   - DOMAIN-SUFFIX,qcloudzygj.com,DIRECT
   - DOMAIN-SUFFIX,qcloudwzgj.com,DIRECT
+  # 非 TUN 模式或客户端未合并 TUN 排除项时的 IP 兜底
+  - IP-CIDR,120.53.74.0/24,DIRECT,no-resolve
   # 腾讯官方主服务 / OpenAPI / 邀请 / 企业专享域名
   - DOMAIN-SUFFIX,copilot.tencent.com,DIRECT
   - DOMAIN-SUFFIX,copilot-invite.tencent.com,DIRECT
