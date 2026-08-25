@@ -26,6 +26,7 @@ log-level: info
 ipv6: false
 unified-delay: true
 tcp-concurrent: true
+find-process-mode: strict  # 严格识别发起连接的进程，用于 WorkBuddy 强制直连
 # external-controller: 127.0.0.1:9090   # 如需 Web 控制面板可取消注释
 
 # 记住节点选择（客户端重启后保持之前的节点选择）
@@ -177,12 +178,6 @@ proxy-groups:
       - 🇯🇵 日本节点
       - ♻️ 自动选择
 
-  # 腾讯 WorkBuddy：固定直连，不经过代理节点
-  - name: 💼 WorkBuddy
-    type: select
-    proxies:
-      - DIRECT
-
   # 国内直连
   - name: 🎯 国内直连
     type: select
@@ -242,13 +237,30 @@ rules:
   - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
   - IP-CIDR,169.254.0.0/16,DIRECT,no-resolve
 
-  # ===== 3. 腾讯 WorkBuddy：所有流量直连 =====
-  # 进程规则覆盖 WorkBuddy 访问的模型、插件和任意第三方站点；
-  # 官方域名规则用于进程识别不可用时的兜底。
-  - PROCESS-NAME,WorkBuddy.exe,💼 WorkBuddy
-  - DOMAIN-SUFFIX,copilot.tencent.com,💼 WorkBuddy
-  - DOMAIN-SUFFIX,workbuddy.ai,💼 WorkBuddy
-  - DOMAIN-SUFFIX,workbuddy.link,💼 WorkBuddy
+  # ===== 3. 腾讯 WorkBuddy：强制直连，禁止走代理 =====
+  # 直接指向 DIRECT，不使用可手动切换的策略组。
+  # 路径规则同时覆盖 WorkBuddy 安装目录中的更新器、运行时和子进程。
+  - PROCESS-NAME,WorkBuddy.exe,DIRECT
+  - PROCESS-NAME,WorkBuddy Service.exe,DIRECT
+  - PROCESS-NAME,workbuddy-service.exe,DIRECT
+  - PROCESS-PATH-REGEX,(?i).*\\WorkBuddy\\.*,DIRECT
+  # WorkBuddy 主站、文档和分享链接
+  - DOMAIN-SUFFIX,workbuddy.link,DIRECT
+  - DOMAIN-SUFFIX,workbuddy.ai,DIRECT
+  - DOMAIN-SUFFIX,workbuddy.cn,DIRECT
+  - DOMAIN-SUFFIX,workbuddy.tencent.com,DIRECT
+  # 腾讯官方主服务 / OpenAPI / 邀请 / 企业专享域名
+  - DOMAIN-SUFFIX,copilot.tencent.com,DIRECT
+  - DOMAIN-SUFFIX,copilot-invite.tencent.com,DIRECT
+  - DOMAIN-SUFFIX,copilot.qq.com,DIRECT
+  # 官方静态资源
+  - DOMAIN,acc-1258344699.cos.accelerate.myqcloud.com,DIRECT
+  - DOMAIN,cs-res-1258344699.file.myqcloud.com,DIRECT
+  # 微信登录链路
+  - DOMAIN,open.weixin.qq.com,DIRECT
+  - DOMAIN,long.weixin.qq.com,DIRECT
+  - DOMAIN,res.weixin.qq.com,DIRECT
+  - DOMAIN,localhost.weixin.qq.com,DIRECT
 
   # ===== 4. AI 服务：走美国节点 =====
   - GEOSITE,openai,🤖 AI专用
