@@ -9,8 +9,7 @@
 #   4. AI 服务           → 默认美国节点
 #   5. RunningHub        → 默认香港节点
 #   6. TapNow            → 默认香港节点
-#   7. WorkBuddy         → 全部直连
-#   8. Adobe 全家桶      → 全部断网（REJECT）
+#   7. Adobe 全家桶      → 全部断网（REJECT）
 #
 #   ⚠️ 美国节点仅默认提供给 AI 服务使用（保证 AI 风控风险最低）
 #
@@ -26,14 +25,7 @@ log-level: info
 ipv6: false
 unified-delay: true
 tcp-concurrent: true
-find-process-mode: strict  # 严格识别发起连接的进程，用于 WorkBuddy 强制直连
 # external-controller: 127.0.0.1:9090   # 如需 Web 控制面板可取消注释
-
-# WorkBuddy 分享页对 Mihomo TUN 接管存在兼容问题。
-# 只补充 TUN 排除项，TUN 是否启用仍由客户端设置决定。
-tun:
-  route-exclude-address:
-    - 120.53.74.0/24
 
 # 记住节点选择（客户端重启后保持之前的节点选择）
 profile:
@@ -83,17 +75,10 @@ dns:
     - "time.windows.com"
     - "time.nist.gov"
     - "time.apple.com"
-    # WorkBuddy 分享页使用腾讯云动态加速，保留真实 IP，避免 Fake-IP 影响入口选择
-    - "workbuddy.link"
-    - "*.workbuddy.link"
   nameserver-policy:
     "geosite:cn":
       - 223.5.5.5
       - 119.29.29.29
-    # WorkBuddy 分享链接固定用国内 DNS 解析，不使用境外 fallback
-    "+.workbuddy.link":
-      - 119.29.29.29
-      - 223.5.5.5
 
 # ============================================================
 #  订阅链接（已填入，仅分享给信任的人）
@@ -250,37 +235,7 @@ rules:
   - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
   - IP-CIDR,169.254.0.0/16,DIRECT,no-resolve
 
-  # ===== 3. 腾讯 WorkBuddy：强制直连，禁止走代理 =====
-  # 直接指向 DIRECT，不使用可手动切换的策略组。
-  # 路径规则同时覆盖 WorkBuddy 安装目录中的更新器、运行时和子进程。
-  - PROCESS-NAME,WorkBuddy.exe,DIRECT
-  - PROCESS-NAME,WorkBuddy Service.exe,DIRECT
-  - PROCESS-NAME,workbuddy-service.exe,DIRECT
-  - PROCESS-PATH-REGEX,(?i).*\\WorkBuddy\\.*,DIRECT
-  # WorkBuddy 主站、文档和分享链接
-  - DOMAIN-SUFFIX,workbuddy.link,DIRECT
-  - DOMAIN-SUFFIX,workbuddy.ai,DIRECT
-  - DOMAIN-SUFFIX,workbuddy.cn,DIRECT
-  - DOMAIN-SUFFIX,workbuddy.tencent.com,DIRECT
-  # WorkBuddy 分享页的腾讯云全局加速 CNAME
-  - DOMAIN-SUFFIX,qcloudzygj.com,DIRECT
-  - DOMAIN-SUFFIX,qcloudwzgj.com,DIRECT
-  # 非 TUN 模式或客户端未合并 TUN 排除项时的 IP 兜底
-  - IP-CIDR,120.53.74.0/24,DIRECT,no-resolve
-  # 腾讯官方主服务 / OpenAPI / 邀请 / 企业专享域名
-  - DOMAIN-SUFFIX,copilot.tencent.com,DIRECT
-  - DOMAIN-SUFFIX,copilot-invite.tencent.com,DIRECT
-  - DOMAIN-SUFFIX,copilot.qq.com,DIRECT
-  # 官方静态资源
-  - DOMAIN,acc-1258344699.cos.accelerate.myqcloud.com,DIRECT
-  - DOMAIN,cs-res-1258344699.file.myqcloud.com,DIRECT
-  # 微信登录链路
-  - DOMAIN,open.weixin.qq.com,DIRECT
-  - DOMAIN,long.weixin.qq.com,DIRECT
-  - DOMAIN,res.weixin.qq.com,DIRECT
-  - DOMAIN,localhost.weixin.qq.com,DIRECT
-
-  # ===== 4. AI 服务：走美国节点 =====
+  # ===== 3. AI 服务：走美国节点 =====
   - GEOSITE,openai,🤖 AI专用
   - DOMAIN-SUFFIX,anthropic.com,🤖 AI专用
   - DOMAIN-SUFFIX,claude.ai,🤖 AI专用
@@ -293,13 +248,13 @@ rules:
   - DOMAIN-SUFFIX,copilot.microsoft.com,🤖 AI专用
   - DOMAIN-SUFFIX,blackbox.ai,🤖 AI专用
 
-  # ===== 5. RunningHub：默认香港节点 =====
+  # ===== 4. RunningHub：默认香港节点 =====
   - DOMAIN-SUFFIX,runninghub.ai,🎨 RunningHub
 
-  # ===== 6. TapNow：默认香港节点 =====
+  # ===== 4.5 TapNow：默认香港节点 =====
   - DOMAIN-SUFFIX,tapnow.ai,🎨 TapNow
 
-  # ===== 7. 流媒体：走日本/香港节点 =====
+  # ===== 5. 流媒体：走日本/香港节点 =====
   - GEOSITE,youtube,🌍 流媒体专用
   - GEOSITE,netflix,🌍 流媒体专用
   - GEOSITE,disney,🌍 流媒体专用
@@ -312,9 +267,9 @@ rules:
   - DOMAIN-SUFFIX,tiktokcdn.com,🌍 流媒体专用
   - DOMAIN-SUFFIX,tiktokcdn-us.com,🌍 流媒体专用
 
-  # ===== 8. 国内流量：直连 =====
+  # ===== 6. 国内流量：直连 =====
   - GEOSITE,cn,🎯 国内直连
   - GEOIP,CN,🎯 国内直连,no-resolve
 
-  # ===== 9. 兜底：其余国外流量走默认代理 =====
+  # ===== 7. 兜底：其余国外流量走默认代理 =====
   - MATCH,🚀 节点选择
